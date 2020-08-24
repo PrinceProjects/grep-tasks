@@ -3,9 +3,9 @@ const router = express.Router();
 const bcrypt = require("bcryptjs");
 const { check, validationResult } = require("express-validator")
 const User = require("../models/user")
-
+const auth = require('../middlewares/auth')
 // get all users
-router.get('/', async (req,res) => {
+router.get('/', auth, async (req,res) => {
 	try {
 		const users = await User.find()
 		res.send(users)
@@ -15,7 +15,7 @@ router.get('/', async (req,res) => {
 })
 
 // get one user
-router.get('/:id', (req,res) => {
+router.get('/:id', auth, (req,res) => {
 	res.send(`get the user with id ${req.params.id}`)
 })
 
@@ -37,7 +37,8 @@ router.post(
 		const { name, email, password } = req.body;
 
 		// hash password
-		const hashedPassword = bcrypt.hashSync(password, 10);
+		const salt = await bcrypt.genSalt(10);
+		const hashedPassword = await bcrypt.hash(password, salt)
 
 		// insert data into database
 		try {

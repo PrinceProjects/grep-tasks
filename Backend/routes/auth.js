@@ -7,17 +7,17 @@ const JWT_SECRET = process.env.JWT_SECRET;
 const { check, validationResult } = require('express-validator')
 
 const User = require('../models/user');
-// const auth = require('../middleware/auth')
+const auth = require('../middlewares/auth')
 
-// router.get('/', auth, async (req, res) => {
-// 	try {
-// 		const user = await User.findById(req.user.id).select('-password');
-// 		res.json(user);
-// 	} catch (err) {
-// 		console.error(err.message);
-// 		res.status(500).send('Server Error');
-// 	}
-// });
+router.get('/', auth, async (req, res) => {
+	try {
+		const user = await User.findById(req.user.id).select('-password');
+		res.json(user);
+	} catch (err) {
+		console.error(err.message);
+		res.status(500).send('Server Error');
+	}
+});
 
 router.post(
 	'/signup',
