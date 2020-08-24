@@ -24,36 +24,36 @@ router.post(
 	'/', 
 	[
 		check("name").not().isEmpty().trim().escape(),
-	    check("password").not().isEmpty().trim().escape(),
-	    check("email").isEmail(),
+		check("password").not().isEmpty().trim().escape(),
+		check("email").isEmail(),
 	],
 	async (req,res) => {
 		// checkvalidation errors
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
-	      return res.status(400).json({ errors: errors.array() });
-	    }
+		  return res.status(400).json({ errors: errors.array() });
+		}
 
-	    const { name, email, password } = req.body;
+		const { name, email, password } = req.body;
 
-	    // hash password
-	    const hashedPassword = bcrypt.hashSync(password, 10);
+		// hash password
+		const hashedPassword = bcrypt.hashSync(password, 10);
 
-	    // insert data into database
-	    try {
-	      const newUser = new User({
-	        name,
-	        email,
-	        password:hashedPassword
-	      });
+		// insert data into database
+		try {
+		  const newUser = new User({
+			name,
+			email,
+			password:hashedPassword
+		  });
 
-	      const user = await newUser.save();
+		  const user = await newUser.save();
 
-	      res.json(user);
-	    } catch (err) {
-	      console.error(err.message);
-	      res.status(500).send('Server Error');
-	    }
+		  res.json(user);
+		} catch (err) {
+		  console.error(err.message);
+		  res.status(500).send('Server Error');
+		}
 	}
 );
 
