@@ -5,7 +5,7 @@ const { check, validationResult } = require("express-validator")
 const User = require("../models/user")
 const auth = require('../middlewares/auth')
 // get all users
-router.get('/', auth, async (req,res) => {
+router.get('/',  async (req,res) => {
 	try {
 		const users = await User.find()
 		res.send(users)
