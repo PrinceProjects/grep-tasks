@@ -4,9 +4,11 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 module.exports = function (req,res,next) {
 	
-	// get token from header
-	const token = req.header('x-auth-token');
-
+	let token = req.headers['authorization']
+	token = token.split(' ')[1]
+	// console.log(token);
+	// console.log(JSON.stringify(req.headers));
+	
 	// check if not token
 	if (!token) {
 		return res.status(401).json({ msg: 'Please login...'})

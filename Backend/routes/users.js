@@ -5,7 +5,16 @@ const { check, validationResult } = require("express-validator")
 const User = require("../models/user")
 const auth = require('../middlewares/auth')
 // get all users
-router.get('/',  async (req,res) => {
+router.get('/', auth, async (req,res) => {
+	try {
+		const users = await User.find()
+		res.send(users)
+	} catch (err) {
+		res.status(500).json({message: err.message})
+	}
+})
+
+router.get('/all', async (req,res) => {
 	try {
 		const users = await User.find()
 		res.send(users)
@@ -20,43 +29,43 @@ router.get('/:id', auth, (req,res) => {
 })
 
 // create a user
-router.post(
-	'/', 
-	[
-		check("name").not().isEmpty().trim().escape(),
-		check("password").not().isEmpty().trim().escape(),
-		check("email").isEmail(),
-	],
-	async (req,res) => {
-		// checkvalidation errors
-		const errors = validationResult(req);
-		if (!errors.isEmpty()) {
-		  return res.status(400).json({ errors: errors.array() });
-		}
+// router.post(
+// 	'/', 
+// 	[
+// 		check("name").not().isEmpty().trim().escape(),
+// 		check("password").not().isEmpty().trim().escape(),
+// 		check("email").isEmail(),
+// 	],
+// 	async (req,res) => {
+// 		// checkvalidation errors
+// 		const errors = validationResult(req);
+// 		if (!errors.isEmpty()) {
+// 		  return res.status(400).json({ errors: errors.array() });
+// 		}
 
-		const { name, email, password } = req.body;
+// 		const { name, email, password } = req.body;
 
-		// hash password
-		const salt = await bcrypt.genSalt(10);
-		const hashedPassword = await bcrypt.hash(password, salt)
+// 		// hash password
+// 		const salt = await bcrypt.genSalt(10);
+// 		const hashedPassword = await bcrypt.hash(password, salt)
 
-		// insert data into database
-		try {
-		  const newUser = new User({
-			name,
-			email,
-			password:hashedPassword
-		  });
+// 		// insert data into database
+// 		try {
+// 		  const newUser = new User({
+// 			name,
+// 			email,
+// 			password:hashedPassword
+// 		  });
 
-		  const user = await newUser.save();
+// 		  const user = await newUser.save();
 
-		  res.json(user);
-		} catch (err) {
-		  console.error(err.message);
-		  res.status(500).send('Server Error');
-		}
-	}
-);
+// 		  res.json(user);
+// 		} catch (err) {
+// 		  console.error(err.message);
+// 		  res.status(500).send('Server Error');
+// 		}
+// 	}
+// );
 
 // update a user
 router.patch('/:id', (req,res) => {
